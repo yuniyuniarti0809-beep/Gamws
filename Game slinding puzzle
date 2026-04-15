@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Game Puzzle Geser</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f0f0; }
+        #puzzle-board { display: grid; grid-template-columns: repeat(3, 100px); grid-gap: 5px; margin-top: 20px; }
+        .tile { width: 100px; height: 100px; background: #3498db; color: white; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; border-radius: 5px; }
+        .empty { background: #bdc3c7; cursor: default; }
+        button { margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>Game Puzzle Geser</h1>
+    <div id="puzzle-board"></div>
+    <button onclick="shuffleBoard()">Acak Puzzle</button>
+
+    <script>
+        let board = [1, 2, 3, 4, 5, 6, 7, 8, null]; // null adalah kotak kosong
+
+        function drawBoard() {
+            const boardDiv = document.getElementById('puzzle-board');
+            boardDiv.innerHTML = '';
+            board.forEach((val, index) => {
+                const tile = document.createElement('div');
+                tile.className = val ? 'tile' : 'tile empty';
+                tile.innerText = val || '';
+                tile.onclick = () => moveTile(index);
+                boardDiv.appendChild(tile);
+            });
+        }
+
+        function moveTile(index) {
+            const emptyIndex = board.indexOf(null);
+            const validMoves = [index - 1, index + 1, index - 3, index + 3];
+            
+            // Cek apakah klik bersebelahan dengan kotak kosong
+            if (validMoves.includes(emptyIndex)) {
+                // Pastikan perpindahan tidak melompati baris
+                if (index % 3 !== 0 || emptyIndex !== index - 1) {
+                    if (index % 3 !== 2 || emptyIndex !== index + 1) {
+                        [board[index], board[emptyIndex]] = [board[emptyIndex], board[index]];
+                        drawBoard();
+                    }
+                }
+            }
+        }
+
+        function shuffleBoard() {
+            for (let i = board.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [board[i], board[j]] = [board[j], board[i]];
+            }
+            drawBoard();
+        }
+
+        drawBoard();
+    </script>
+</body>
+</html>
